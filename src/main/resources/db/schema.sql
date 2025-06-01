@@ -1,8 +1,8 @@
 create table if not exists post (
     id serial primary key,
-    name text,
-    text text,
+    title text,
     link text,
-    created timestamp without time zone,
+    description text,
+    time timestamp without time zone,
     unique (name, text)
 );
