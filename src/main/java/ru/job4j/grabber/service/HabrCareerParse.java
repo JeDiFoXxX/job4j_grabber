@@ -4,6 +4,7 @@ import org.apache.logging.log4j.*;
 import org.jsoup.Jsoup;
 
 import ru.job4j.grabber.model.Post;
+import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,8 +41,9 @@ public class HabrCareerParse implements Parse {
                 if (dateElement != null) {
                     var timeElement = dateElement.firstChild();
                     if (timeElement != null) {
-                        /*Тут должна быть дата post.setTime(time);*/
-                        String smile = "=)";
+                        HabrCareerDateTimeParser timeParser = new HabrCareerDateTimeParser();
+                        String careerDate = timeElement.attr("datetime");
+                        post.setTime(timeParser.parse(careerDate));
                     }
                 }
                 result.add(post);
