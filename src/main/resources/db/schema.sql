@@ -4,5 +4,5 @@ create table if not exists post (
     link text,
     description text,
     time timestamp without time zone,
-    unique (name, text)
+    unique (title, description)
 );
