@@ -22,7 +22,7 @@ public class JdbcStore implements Store {
         post.setTitle(resultSet.getString(2));
         post.setLink(resultSet.getString(3));
         post.setDescription(resultSet.getString(4));
-        post.setTime(resultSet.getTimestamp(5).toLocalDateTime());
+        post.setTime(resultSet.getTimestamp(5).getTime());
         return post;
     }
 
@@ -33,7 +33,8 @@ public class JdbcStore implements Store {
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getLink());
             statement.setString(3, post.getDescription());
-            statement.setTimestamp(4, Timestamp.valueOf(post.getTime()));
+            Timestamp timestamp = post.getTime() != null ? new Timestamp(post.getTime()) : null;
+            statement.setTimestamp(4, timestamp);
             statement.executeUpdate();
         } catch (SQLException e) {
             LOG.error("Error saving post : {}", post, e);

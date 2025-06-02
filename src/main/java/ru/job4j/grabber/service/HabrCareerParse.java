@@ -7,6 +7,7 @@ import ru.job4j.grabber.model.Post;
 import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,8 @@ public class HabrCareerParse implements Parse {
                     if (timeElement != null) {
                         HabrCareerDateTimeParser timeParser = new HabrCareerDateTimeParser();
                         String careerDate = timeElement.attr("datetime");
-                        post.setTime(timeParser.parse(careerDate));
+                        String localDateTime = timeParser.parse(careerDate).toString();
+                        post.setTime(Long.parseLong(localDateTime));
                     }
                 }
                 result.add(post);
@@ -53,5 +55,12 @@ public class HabrCareerParse implements Parse {
             LOG.error("When load page", e);
         }
         return result;
+    }
+
+    public static void main(String[] args) {
+        HabrCareerParse habrCareerParse = new HabrCareerParse();
+        for (Post p : habrCareerParse.fetch()) {
+            System.out.println(p);
+        }
     }
 }
