@@ -1,14 +1,13 @@
 package ru.job4j.grabber.model;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Post {
-    private long id;
+    private Long id;
     private String title;
     private String link;
     private String description;
-    private LocalDateTime time;
+    private Long time;
 
     public String getTitle() {
         return title;
@@ -42,11 +41,11 @@ public class Post {
         this.description = description;
     }
 
-    public LocalDateTime getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
