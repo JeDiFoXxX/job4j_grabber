@@ -17,6 +17,21 @@ public class HabrCareerParse implements Parse {
     private static final String SUFFIX = "&q=Java%20developer&type=all";
     private static final int MAX_PAGES = 5;
 
+    private static String retrieveDescription(String link) {
+        String result = null;
+        try {
+            var connection = Jsoup.connect(link);
+            var document = connection.get();
+            var descriptionElement = document.select(".style-ugc").first();
+            if (descriptionElement != null) {
+                result = descriptionElement.text();
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to load page for link: {}", link, e);
+        }
+        return result;
+    }
+
     @Override
     public List<Post> fetch() {
         var result = new ArrayList<Post>();
@@ -36,6 +51,7 @@ public class HabrCareerParse implements Parse {
                         var linkElement = titleElement.firstChild();
                         if (linkElement != null) {
                             String link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
+                            post.setDescription(retrieveDescription(link));
                             post.setLink(link);
                         }
                     }
@@ -50,19 +66,11 @@ public class HabrCareerParse implements Parse {
                         }
                     }
                     result.add(post);
-
                 });
             }
         } catch (IOException e) {
             LOG.error("When load page", e);
         }
         return result;
-    }
-
-    public static void main(String[] args) {
-        HabrCareerParse habrCareerParse = new HabrCareerParse();
-        for (Post p : habrCareerParse.fetch()) {
-            System.out.println(p);
-        }
     }
 }
