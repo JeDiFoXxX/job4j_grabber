@@ -7,7 +7,6 @@ import ru.job4j.grabber.model.Post;
 import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,41 +15,44 @@ public class HabrCareerParse implements Parse {
     private static final String SOURCE_LINK = "https://career.habr.com";
     private static final String PREFIX = "/vacancies?page=";
     private static final String SUFFIX = "&q=Java%20developer&type=all";
+    private static final int MAX_PAGES = 5;
 
     @Override
     public List<Post> fetch() {
         var result = new ArrayList<Post>();
         try {
-            int pageNumber = 1;
-            String fullLink = "%s%s%d%s".formatted(SOURCE_LINK, PREFIX, pageNumber, SUFFIX);
-            var connection = Jsoup.connect(fullLink);
-            var document = connection.get();
-            var rows = document.select(".vacancy-card__inner");
-            rows.forEach(row -> {
-                var post = new Post();
-                var titleElement = row.select(".vacancy-card__title").first();
-                var dateElement = row.select(".vacancy-card__date").first();
-                if (titleElement != null) {
-                    String vacancyName = titleElement.text();
-                    post.setTitle(vacancyName);
-                    var linkElement = titleElement.firstChild();
-                    if (linkElement != null) {
-                        String link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
-                        post.setLink(link);
+            for (int pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
+                String fullLink = "%s%s%d%s".formatted(SOURCE_LINK, PREFIX, pageNumber, SUFFIX);
+                var connection = Jsoup.connect(fullLink);
+                var document = connection.get();
+                var rows = document.select(".vacancy-card__inner");
+                rows.forEach(row -> {
+                    var post = new Post();
+                    var titleElement = row.select(".vacancy-card__title").first();
+                    var dateElement = row.select(".vacancy-card__date").first();
+                    if (titleElement != null) {
+                        String vacancyName = titleElement.text();
+                        post.setTitle(vacancyName);
+                        var linkElement = titleElement.firstChild();
+                        if (linkElement != null) {
+                            String link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
+                            post.setLink(link);
+                        }
                     }
-                }
-                if (dateElement != null) {
-                    var timeElement = dateElement.firstChild();
-                    if (timeElement != null) {
-                        HabrCareerDateTimeParser timeParser = new HabrCareerDateTimeParser();
-                        String careerDate = timeElement.attr("datetime");
-                        String localDateTime = timeParser.parse(careerDate).toString();
-                        post.setTime(Long.parseLong(localDateTime));
+                    if (dateElement != null) {
+                        var timeElement = dateElement.firstChild();
+                        if (timeElement != null) {
+                            HabrCareerDateTimeParser timeParser = new HabrCareerDateTimeParser();
+                            String careerDate = timeElement.attr("datetime");
+                            String localDateTime = timeParser.parse(careerDate)
+                                    .toString().replaceAll("[-T:]", "");
+                            post.setTime(Long.parseLong(localDateTime));
+                        }
                     }
-                }
-                result.add(post);
+                    result.add(post);
 
-            });
+                });
+            }
         } catch (IOException e) {
             LOG.error("When load page", e);
         }
