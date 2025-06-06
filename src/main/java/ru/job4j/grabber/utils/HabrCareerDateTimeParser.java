@@ -9,5 +9,4 @@ public class HabrCareerDateTimeParser implements DateTimeParser {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         return LocalDateTime.parse(parse, formatter);
     }
-
 }
