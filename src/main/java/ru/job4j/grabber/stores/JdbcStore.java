@@ -22,7 +22,8 @@ public class JdbcStore implements Store {
         post.setTitle(resultSet.getString(2));
         post.setLink(resultSet.getString(3));
         post.setDescription(resultSet.getString(4));
-        post.setTime(resultSet.getTimestamp(5).getTime());
+        post.setTime(resultSet.getTimestamp(5) != null
+                ? resultSet.getTimestamp(5).getTime() : 0);
         return post;
     }
 
