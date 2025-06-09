@@ -16,6 +16,18 @@ public class JdbcStore implements Store {
         this.connection = connection;
     }
 
+    private boolean check(Post post) {
+        boolean rsl = false;
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT 1 FROM post WHERE description = ?")) {
+            statement.setString(1, post.getDescription());
+            rsl = statement.executeQuery().next();
+        } catch (SQLException e) {
+            LOG.error("Error checking post existence", e);
+        }
+        return rsl;
+    }
+
     private Post createPost(ResultSet resultSet) throws SQLException {
         Post post = new Post();
         post.setId(resultSet.getLong(1));
@@ -29,16 +41,18 @@ public class JdbcStore implements Store {
 
     @Override
     public void save(Post post) {
-        try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO post (title, link, description, time) VALUES (?, ?, ?, ?)")) {
-            statement.setString(1, post.getTitle());
-            statement.setString(2, post.getLink());
-            statement.setString(3, post.getDescription());
-            Timestamp timestamp = post.getTime() != null ? new Timestamp(post.getTime()) : null;
-            statement.setTimestamp(4, timestamp);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            LOG.error("Error saving post : {}", post, e);
+        if (!check(post)) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO post (title, link, description, time) VALUES (?, ?, ?, ?)")) {
+                statement.setString(1, post.getTitle());
+                statement.setString(2, post.getLink());
+                statement.setString(3, post.getDescription());
+                Timestamp timestamp = post.getTime() != null ? new Timestamp(post.getTime()) : null;
+                statement.setTimestamp(4, timestamp);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                LOG.error("Error saving post : {}", post, e);
+            }
         }
     }
 

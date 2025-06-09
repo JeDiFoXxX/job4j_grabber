@@ -77,45 +77,4 @@ public class HabrCareerParse implements Parse {
         }
         return result;
     }
-
-    @Override
-    public List<Post> list(String link) {
-        var result = new ArrayList<Post>();
-        try {
-            for (int pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
-                String fullLink = "%s%s%d%s".formatted(link, PREFIX, pageNumber, SUFFIX);
-                var connection = Jsoup.connect(fullLink);
-                var document = connection.get();
-                var rows = document.select(".vacancy-card__inner");
-                rows.forEach(row -> {
-                    var post = new Post();
-                    var titleElement = row.select(".vacancy-card__title").first();
-                    var dateElement = row.select(".vacancy-card__date").first();
-                    if (titleElement != null) {
-                        String vacancyName = titleElement.text();
-                        post.setTitle(vacancyName);
-                        var linkElement = titleElement.firstChild();
-                        if (linkElement != null) {
-                            String linkVacancy = String.format("%s%s", link, linkElement.attr("href"));
-                            post.setDescription(retrieveDescription(linkVacancy));
-                            post.setLink(linkVacancy);
-                        }
-                    }
-                    if (dateElement != null) {
-                        var timeElement = dateElement.firstChild();
-                        if (timeElement != null) {
-                            String careerDate = timeElement.attr("datetime");
-                            String localDateTime = dateTimeParser.parse(careerDate)
-                                    .toString().replaceAll("[-T:]", "");
-                            post.setTime(Long.parseLong(localDateTime));
-                        }
-                    }
-                    result.add(post);
-                });
-            }
-        } catch (IOException e) {
-            LOG.error("When load page", e);
-        }
-        return result;
-    }
 }
