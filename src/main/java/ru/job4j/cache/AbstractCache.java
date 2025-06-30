@@ -13,14 +13,20 @@ public abstract class AbstractCache<K, V> {
     }
 
     public final V get(K key) {
-        V rsl;
-        SoftReference<V> check = cache.get(key);
-        if (check != null) {
-            rsl = check.get();
-        } else {
-            V text = load(key);
-            put(key, text);
-            rsl = text;
+        V rsl = null;
+        int attempts = 0;
+        while (rsl == null && attempts < 11) {
+            SoftReference<V> check = cache.get(key);
+            if (check == null) {
+                put(key, load(key));
+                check = cache.get(key);
+            }
+            rsl = check != null ? check.get() : null;
+            attempts++;
+        }
+        if (rsl == null) {
+            throw new IllegalStateException("Не удалось получить значение из кэша после "
+                    + (attempts - 1) + " попыток по ключу " + key);
         }
         return rsl;
     }
