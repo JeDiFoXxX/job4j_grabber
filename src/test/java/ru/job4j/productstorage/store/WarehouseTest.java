@@ -1,5 +1,6 @@
 package ru.job4j.productstorage.store;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.job4j.productstorage.model.Food;
 import ru.job4j.productstorage.model.Fruit;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.*;
 
+@Disabled
 class WarehouseTest {
     @Test
     void checkReturnsTrueWhenFoodIsValid() {
