@@ -9,12 +9,23 @@ public class TruckParking extends AbstractParking {
 
     @Override
     public int checkPlace(int size) {
-        return -1;
+        int indexParking = -1;
+        for (int i = 0; i < getVehicles().length; i++) {
+            if (!getVehicles()[i]) {
+                indexParking = i;
+                break;
+            }
+        }
+        return indexParking;
     }
 
     @Override
-    public void add(Vehicle vehicle) { }
+    public void add(Vehicle o, int indexParking) {
+        getVehicles()[indexParking] = true;
+    }
 
     @Override
-    public void remove(Vehicle vehicle) { }
+    public void remove(Vehicle o) {
+        getVehicles()[o.getIndexParking()] = false;
+    }
 }

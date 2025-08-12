@@ -15,7 +15,7 @@ public abstract class AbstractParking implements Parking<Vehicle> {
 
     public abstract int checkPlace(int size);
 
-    public abstract void add(Vehicle vehicle);
+    public abstract void add(Vehicle o, int indexParking);
 
-    public abstract void remove(Vehicle vehicle);
+    public abstract void remove(Vehicle o);
 }

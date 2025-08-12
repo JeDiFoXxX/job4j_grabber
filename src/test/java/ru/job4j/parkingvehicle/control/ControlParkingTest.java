@@ -10,6 +10,7 @@ import ru.job4j.parkingvehicle.vehicle.Truck;
 import ru.job4j.parkingvehicle.vehicle.Vehicle;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,8 +19,9 @@ class ControlParkingTest {
     @Test
     void whenAddPasCarThenAssignParkingAndOccupyPlace() {
         AbstractParking parking = new PasCarParking(10);
-        PasCar.setStrategy(List.of(parking));
-        ControlParking controlParking = new ControlParking(List.of(parking));
+        ControlParking controlParking = new ControlParking(
+                Map.of(PasCar.class, List.of(parking))
+        );
         Vehicle vehicle = new PasCar();
         controlParking.addVehicle(vehicle);
         assertThat(vehicle.getParking()).isEqualTo(parking);
@@ -31,8 +33,10 @@ class ControlParkingTest {
     void whenAddTruckOnPasCarParkingThenAssignParkingAndOccupyPlaces() {
         AbstractParking pasCarParking = new PasCarParking(10);
         AbstractParking truckParking = new TruckParking(1);
-        Truck.setStrategy(List.of(truckParking, pasCarParking));
-        ControlParking controlParking = new ControlParking(List.of(pasCarParking, truckParking));
+        ControlParking controlParking = new ControlParking(
+                Map.of(PasCar.class, List.of(pasCarParking),
+                        Truck.class, List.of(pasCarParking, truckParking))
+        );
         Vehicle vehicle = new Truck(2);
         truckParking.getVehicles()[0] = true;
         controlParking.addVehicle(vehicle);
@@ -45,8 +49,9 @@ class ControlParkingTest {
     @Test
     void whenAddTruckOnTruckParkingThenAssignParkingAndOccupyPlace() {
         AbstractParking parking = new TruckParking(10);
-        Truck.setStrategy(List.of(parking));
-        ControlParking controlParking = new ControlParking(List.of(parking));
+        ControlParking controlParking = new ControlParking(
+                Map.of(Truck.class, List.of(parking))
+        );
         Vehicle vehicle = new Truck(2);
         controlParking.addVehicle(vehicle);
         assertThat(vehicle.getParking()).isEqualTo(parking);
@@ -57,8 +62,9 @@ class ControlParkingTest {
     @Test
     void whenRemovePasCarThenFreePlaceAndUnsetParking() {
         AbstractParking parking = new PasCarParking(10);
-        PasCar.setStrategy(List.of(parking));
-        ControlParking controlParking = new ControlParking(List.of(parking));
+        ControlParking controlParking = new ControlParking(
+                Map.of(PasCar.class, List.of(parking))
+        );
         Vehicle vehicle = new PasCar();
         controlParking.addVehicle(vehicle);
         controlParking.removeVehicle(vehicle);
@@ -71,8 +77,10 @@ class ControlParkingTest {
     void whenRemoveTruckOnPasCarParkingThenFreePlacesAndUnsetParking() {
         AbstractParking pasCarParking = new PasCarParking(10);
         AbstractParking truckParking = new TruckParking(1);
-        Truck.setStrategy(List.of(truckParking, pasCarParking));
-        ControlParking controlParking = new ControlParking(List.of(pasCarParking, truckParking));
+        ControlParking controlParking = new ControlParking(
+                Map.of(PasCar.class, List.of(pasCarParking),
+                        Truck.class, List.of(pasCarParking, truckParking))
+        );
         Vehicle vehicle = new Truck(2);
         truckParking.getVehicles()[0] = true;
         controlParking.addVehicle(vehicle);
@@ -86,8 +94,9 @@ class ControlParkingTest {
     @Test
     void whenRemoveTruckOnTruckParkingThenFreePlaceAndUnsetParking() {
         AbstractParking parking = new TruckParking(10);
-        Truck.setStrategy(List.of(parking));
-        ControlParking controlParking = new ControlParking(List.of(parking));
+        ControlParking controlParking = new ControlParking(
+                Map.of(Truck.class, List.of(parking))
+        );
         Vehicle vehicle = new Truck(2);
         controlParking.addVehicle(vehicle);
         controlParking.removeVehicle(vehicle);

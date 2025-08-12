@@ -1,6 +1,5 @@
 package ru.job4j.parkingvehicle.parking;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.job4j.parkingvehicle.vehicle.PasCar;
 import ru.job4j.parkingvehicle.vehicle.Truck;
@@ -8,7 +7,6 @@ import ru.job4j.parkingvehicle.vehicle.Vehicle;
 
 import static org.assertj.core.api.Assertions.*;
 
-@Disabled
 class AbstractParkingTest {
     @Test
     void whenPasCarParkingHasFreePlaceThenReturnZero() {
@@ -59,7 +57,8 @@ class AbstractParkingTest {
     void whenAddPasCarThenPlaceIsOccupied() {
         AbstractParking parking = new PasCarParking(2);
         Vehicle vehicle = new PasCar();
-        parking.add(vehicle);
+        int indexParking = parking.checkPlace(vehicle.getSize());
+        parking.add(vehicle, indexParking);
         assertThat(parking.getVehicles()[0]).isTrue();
     }
 
@@ -67,7 +66,8 @@ class AbstractParkingTest {
     void whenAddTruckThenMultiplePlacesAreOccupied() {
         AbstractParking parking = new PasCarParking(2);
         Vehicle vehicle = new Truck(2);
-        parking.add(vehicle);
+        int indexParking = parking.checkPlace(vehicle.getSize());
+        parking.add(vehicle, indexParking);
         assertThat(parking.getVehicles()[0]).isTrue();
         assertThat(parking.getVehicles()[1]).isTrue();
     }
@@ -76,7 +76,8 @@ class AbstractParkingTest {
     void whenAddTruckToTruckParkingThenPlaceIsOccupied() {
         AbstractParking parking = new TruckParking(1);
         Vehicle vehicle = new Truck(2);
-        parking.add(vehicle);
+        int indexParking = parking.checkPlace(vehicle.getSize());
+        parking.add(vehicle, indexParking);
         assertThat(parking.getVehicles()[0]).isTrue();
     }
 
@@ -84,7 +85,9 @@ class AbstractParkingTest {
     void whenRemovePasCarThenPlaceIsFreed() {
         AbstractParking parking = new PasCarParking(2);
         Vehicle vehicle = new PasCar();
-        parking.add(vehicle);
+        vehicle.setIndexParking(0);
+        int indexParking = parking.checkPlace(vehicle.getSize());
+        parking.add(vehicle, indexParking);
         parking.remove(vehicle);
         assertThat(parking.getVehicles()[0]).isFalse();
     }
@@ -93,7 +96,9 @@ class AbstractParkingTest {
     void whenRemoveTruckThenMultiplePlacesAreFreed() {
         AbstractParking parking = new PasCarParking(2);
         Vehicle vehicle = new Truck(2);
-        parking.add(vehicle);
+        vehicle.setIndexParking(0);
+        int indexParking = parking.checkPlace(vehicle.getSize());
+        parking.add(vehicle, indexParking);
         parking.remove(vehicle);
         assertThat(parking.getVehicles()[0]).isFalse();
         assertThat(parking.getVehicles()[1]).isFalse();
@@ -103,7 +108,9 @@ class AbstractParkingTest {
     void whenRemoveTruckFromTruckParkingThenPlaceIsFreed() {
         AbstractParking parking = new TruckParking(1);
         Vehicle vehicle = new Truck(2);
-        parking.add(vehicle);
+        vehicle.setIndexParking(0);
+        int indexParking = parking.checkPlace(vehicle.getSize());
+        parking.add(vehicle, indexParking);
         parking.remove(vehicle);
         assertThat(parking.getVehicles()[0]).isFalse();
     }
