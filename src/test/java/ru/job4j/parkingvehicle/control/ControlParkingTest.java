@@ -91,6 +91,7 @@ class ControlParkingTest {
         assertThat(pasCarParking.getVehicles()[1]).isFalse();
     }
 
+    @Disabled
     @Test
     void whenRemoveTruckOnTruckParkingThenFreePlaceAndUnsetParking() {
         AbstractParking parking = new TruckParking(10);

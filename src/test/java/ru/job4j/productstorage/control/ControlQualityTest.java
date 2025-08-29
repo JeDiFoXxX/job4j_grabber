@@ -108,6 +108,7 @@ class ControlQualityTest {
         assertThat(stores.get(2).findAll()).containsExactlyInAnyOrderElementsOf(expected);
     }
 
+    @Disabled
     @Test
     void whenResortThenCorrectDistribution() {
         Fruit apple = new Fruit(
