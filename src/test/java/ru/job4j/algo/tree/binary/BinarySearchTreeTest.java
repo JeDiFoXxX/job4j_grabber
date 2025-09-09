@@ -107,4 +107,14 @@ class BinarySearchTreeTest {
         tree.remove(3);
         assertThat(tree.contains(3)).isFalse();
     }
+
+    @Test
+    void whenClearThenOk() {
+        BinarySearchTree<Integer> tree = new BinarySearchTree<>();
+        for (int element : new int[]{4, 2, 6, 3, 5, 7, 1}) {
+            tree.put(element);
+        }
+        tree.clear();
+        assertThat(tree.inSymmetricalOrder()).hasSize(0);
+    }
 }
