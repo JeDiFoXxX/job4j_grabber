@@ -6,6 +6,6 @@ public class SimpleMain {
     }
 
     public static void print() {
-        System.out.println("Hello World");
+        System.out.println("Привет Мир");
     }
 }
